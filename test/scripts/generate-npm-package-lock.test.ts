@@ -99,6 +99,7 @@ describe("generate-npm-package-lock", () => {
     expect(
       normalizeOverrides({
         "openclaw@2026.5.28>undici": "8.5.0",
+        "parent>unused-adapter": "-",
         tar: 7.5,
       }),
     ).toEqual({
@@ -702,6 +703,16 @@ describe("generate-npm-package-lock", () => {
         "extensions/acpx/deps/local-runtime/package.json",
       ]).map(repoRelativePath),
     ).toEqual(["extensions/acpx"]);
+  });
+
+  it("does not normalize raw Git filename boundaries into package manifests", () => {
+    expect(
+      npmLockPackageDirsForChangedPaths([
+        " extensions/acpx/package.json",
+        "extensions/acpx/package.json ",
+        String.raw`extensions\acpx\package.json`,
+      ]),
+    ).toEqual([]);
   });
 
   it("targets the changed publishable gateway protocol manifest", () => {
